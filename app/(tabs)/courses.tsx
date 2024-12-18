@@ -1,9 +1,9 @@
 import { View, Text, FlatList, StyleSheet } from 'react-native'
 
 const mockCourses = [
-  { id: '1', title: 'Mathematics', subject: 'Algebra' },
-  { id: '2', title: 'Physics', subject: 'Mechanics' },
-  { id: '3', title: 'Chemistry', subject: 'Organic Chemistry' },
+  { id: '1', title: 'HAI916I', subject: 'IA pour le génie logiciel' },
+  { id: '2', title: 'HAI913I', subject: 'Évolution et restructuration des logiciels' },
+  { id: '3', title: 'HAI912I', subject: 'Développement mobile avancé, IoT et embarqué' },
 ]
 
 export default function CoursesScreen() {
