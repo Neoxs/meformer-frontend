@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import * as SecureStore from 'expo-secure-store'
 import { useRouter } from 'expo-router'
+import { Platform } from 'react-native'
 
 // Types
 type User = {
@@ -32,6 +33,33 @@ type SignUpData = {
   }
 }
 
+// Storage Helper
+const storage = {
+  async getItem(key: string) {
+    if (Platform.OS === 'web') {
+      return localStorage.getItem(key)
+    } else {
+      return await SecureStore.getItemAsync(key)
+    }
+  },
+
+  async setItem(key: string, value: string) {
+    if (Platform.OS === 'web') {
+      localStorage.setItem(key, value)
+    } else {
+      await SecureStore.setItemAsync(key, value)
+    }
+  },
+
+  async removeItem(key: string) {
+    if (Platform.OS === 'web') {
+      localStorage.removeItem(key)
+    } else {
+      await SecureStore.deleteItemAsync(key)
+    }
+  },
+}
+
 // Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -48,19 +76,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function checkAuthStatus() {
     try {
-      const token =
-        'eyJhbGciOiJIUzI1NiJ9.eyJsYXN0UmVmcmVzaFRpbWUiOjE3MzQ1MjAzNzQxNzUsInhzcmZUb2tlbiI6ImpxdDQ2cDhwcW00MDQ4ZHJrcTNpaHZuOW9hIiwianRpIjoiNzBiMmRkNTItYjQxZS00NDRmLWFmZTctZWY1MTg1YWIyNzhjIiwic3ViIjoiN2E4YTg1OTUtMDY1NS00MTZmLTg1YTMtMDkyM2Q0ZGJhZWU0IiwiaWF0IjoxNzM0NTIwMzc0LCJleHAiOjE3MzQ3Nzk1NzR9.LJlD3sYaaMmH0vhPvcF5HRqSz4VYHpFBSDreOFdgYnc'
-      const userEmail = 'test@test.com'
-      const userDataString = {
-        firstName: 'John',
-        lastName: 'Doe',
-        grade: '10',
-      }
+      const token = await storage.getItem('userToken')
+      const userEmail = await storage.getItem('userEmail')
+      const userDataString = await storage.getItem('userData')
 
       console.log('token : ', token)
+      console.log('email : ', userEmail)
 
       if (token && userEmail && userDataString) {
-        const userData = userDataString
+        const userData = JSON.parse(userDataString)
         setUser({
           email: userEmail,
           token,
@@ -93,9 +117,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Store user data
-      await SecureStore.setItemAsync('userToken', data.token)
-      await SecureStore.setItemAsync('userEmail', email)
-      await SecureStore.setItemAsync(
+      await storage.setItem('userToken', data.token)
+      await storage.setItem('userEmail', email)
+      await storage.setItem(
         'userData',
         JSON.stringify({
           role: data.role,
@@ -140,9 +164,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Store user data
-      await SecureStore.setItemAsync('userToken', data.token)
-      await SecureStore.setItemAsync('userEmail', userData.email)
-      await SecureStore.setItemAsync(
+      await storage.setItem('userToken', data.token)
+      await storage.setItem('userEmail', userData.email)
+      await storage.setItem(
         'userData',
         JSON.stringify({
           role: data.role,
@@ -173,9 +197,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true)
       // Clear stored data
-      await SecureStore.deleteItemAsync('userToken')
-      await SecureStore.deleteItemAsync('userEmail')
-      await SecureStore.deleteItemAsync('userData')
+      await storage.removeItem('userToken');
+      await storage.removeItem('userEmail');
+      await storage.removeItem('userData');
 
       // Update state
       setUser(null)
