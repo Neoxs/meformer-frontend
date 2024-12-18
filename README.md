@@ -171,14 +171,3 @@ cd ..
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
-Project Link: [https://github.com/yourusername/meformer-app](https://github.com/yourusername/meformer-app)
-
-## Acknowledgments
-
-- [Expo](https://expo.dev/)
-- [React Native](https://reactnative.dev/)
-- [React Navigation](https://reactnavigation.org/)
